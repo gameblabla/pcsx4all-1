@@ -2210,7 +2210,13 @@ void psxBios__card_write(void) { // 0x4e
 #ifdef PSXBIOS_LOG
 	PSXBIOS_LOG("psxBios_%s: %x,%x,%x\n", biosB0n[0x4e], a0, a1, a2);
 #endif
-
+	/* Function also accepts sector 400h (a bug) */
+	if (!(a1 >= 0 && a1 <= 0x400))
+	{
+		/* Invalid sectors */
+		v0 = 0; pc0 = ra;
+		return;
+	}
 	card_active_chan = a0;
 	port = a0 >> 4;
 
