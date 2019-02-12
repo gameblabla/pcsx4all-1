@@ -2237,7 +2237,13 @@ void psxBios__card_read(void) { // 0x4f
 #ifdef PSXBIOS_LOG
 	PSXBIOS_LOG("psxBios_%s\n", biosB0n[0x4f]);
 #endif
-
+	/* Function also accepts sector 400h (a bug) */
+	if (!(a1 >= 0 && a1 <= 0x400))
+	{
+		/* Invalid sectors */
+		v0 = 0; pc0 = ra;
+		return;
+	}
 	card_active_chan = a0;
 	port = a0 >> 4;
 
@@ -2902,7 +2908,7 @@ void biosInterrupt(void) {
 
 void psxBiosException(void) {
 	int i;
-
+	uint32_t remember;
 	switch (psxRegs.CP0.n.Cause & 0x3c) {
 		case 0x00: // Interrupt
 			interrupt_r26=psxRegs.CP0.n.EPC;
@@ -2944,8 +2950,10 @@ void psxBiosException(void) {
 		case 0x20: // Syscall
 			switch (a0) {
 				case 1: // EnterCritical - disable irq's
-					psxRegs.CP0.n.Status&=~0x404; 
-					//v0=1;	// HDHOSHY experimental patch: Spongebob, Coldblood, fearEffect, Medievil2, Martian Gothic
+					psxRegs.CP0.n.Status&=~0x404;
+					// Return zero if one of the bits were already zero
+					v0 = (remember == psxRegs.CP0.n.Status) ? 0 : 1;
+					//v0 = 1; HDHOSHY experimental patch: Spongebob, Coldblood, fearEffect, Medievil2, Martian Gothic
 					break;
 
 				case 2: // ExitCritical - enable irq's
