@@ -2949,6 +2949,12 @@ void psxBiosException(void) {
 
 		case 0x20: // Syscall
 			switch (a0) {
+				case 0:
+					/* No function. Simply returns without changing any registers or memory locations
+					* (except that, of course, the exception handler destroys k0).*/
+					k0 = 0;
+					return;
+				break;
 				case 1: // EnterCritical - disable irq's
 					psxRegs.CP0.n.Status&=~0x404;
 					// Return zero if one of the bits were already zero
