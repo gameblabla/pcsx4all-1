@@ -2345,6 +2345,10 @@ void psxBios_close(void) { // 0x36
 	pc0 = ra;
 }
 
+#define PSXSTRBUFMAX 255
+char psxstrbuf[PSXSTRBUFMAX+1];
+unsigned short psxstrbuf_count = 0;
+
 void psxBios_putchar(void) { // 3d
 	char logchar = ( a0 == 0xa ? '>' : (char)a0 );
 	if (psxstrbuf_count < PSXSTRBUFMAX) psxstrbuf[psxstrbuf_count++] = logchar;
@@ -2364,10 +2368,6 @@ void psxBios_putchar(void) { // 3d
 
 	pc0 = ra;
 }
-
-#define PSXSTRBUFMAX 255
-char psxstrbuf[PSXSTRBUFMAX+1];
-unsigned short psxstrbuf_count = 0;
 
 // if R4 is 00000000h then "<NULL>" is output (only that six letters; without appending any CR or LF).
 // We need to handle this case
