@@ -252,6 +252,7 @@ static EvCB *SwEV; // 0xf4
 static EvCB *ThEV; // 0xff
 static u32 *heap_addr = NULL;
 static u32 *heap_end = NULL;
+static u32 heap_size = 0;
 static u32 SysIntRP[8];
 static int CardState = -1;
 static TCB Thread[8];
@@ -1117,7 +1118,7 @@ void psxBios_malloc(void) { // 33
 #ifdef PSXBIOS_LOG
 	PSXBIOS_LOG("psxBios_%s\n", biosA0n[0x33]);
 #endif
-	if (!a0) {
+	if (!a0 || (!heap_size || !heap_addr)) {
 		v0 = 0;
 		pc0 = ra;
 		return;
@@ -1283,7 +1284,8 @@ void psxBios_InitHeap(void) { // 39
 	size &= 0xfffffffc;
 
 	heap_addr = (u32 *)Ra0;
-	heap_end = (u32 *)((u8 *)heap_addr + size);
+	heap_size = size;
+	heap_end = (u32 *)((u8 *)heap_addr + heap_size);
 	/* HACKFIX: Commenting out this line fixes GTA2 crash */
 	//*heap_addr = SWAP32(size | 1);
 
@@ -2947,6 +2949,7 @@ void psxBiosInit(void) {
 	pad_buf1len = pad_buf2len = 0;
 	heap_addr = NULL;
 	heap_end = NULL;
+	heap_size = 0;
 	CardState = -1;
 	CurThread = 0;
 	memset(FDesc, 0, sizeof(FDesc));
