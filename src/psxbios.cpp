@@ -1962,6 +1962,13 @@ void psxBios_WaitEvent(void) { // 0a
 	ev   = a0 & 0xff;
 	spec = (a0 >> 8) & 0xff;
 
+	if (Event[ev][spec].status == EvStUNUSED)
+	{
+		v0 = 0;
+		pc0 = ra;	
+		return;
+	}
+
 #ifdef PSXBIOS_LOG
 	PSXBIOS_LOG("psxBios_%s %x,%x\n", biosB0n[0x0a], ev, spec);
 #endif
