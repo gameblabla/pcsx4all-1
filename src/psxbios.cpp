@@ -3183,6 +3183,7 @@ void psxBiosInit(void) {
 	pad_buf1len = pad_buf2len = 0;
 	heap_addr = NULL;
 	heap_end = NULL;
+	heap_size = 0;
 	CardState = -1;
 	CurThread = 0;
 	memset(FDesc, 0, sizeof(FDesc));
