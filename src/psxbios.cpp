@@ -2409,6 +2409,16 @@ void psxBios__card_wait(void) { // 5d
 	pc0 = ra;
 }
 
+/* Checks the devicename, and if it's accepted, calls a device specific function. 
+ * For the existing devices (cdrom,bu,tty) that specific function simply returns without doing anything.
+ * Maybe other devices (like printers or modems) would do something more interesting. */
+void psxBios_test_device(void) { // 5d
+#ifdef PSXBIOS_LOG
+	PSXBIOS_LOG("psxBios_%s\n", biosB0n[0x5d]);
+#endif
+
+	pc0 = ra;
+}
 
 void psxBios_ChangeClearPad(void) { // 5b
 #ifdef PSXBIOS_LOG
@@ -2780,7 +2790,7 @@ void psxBiosInit(void) {
 	biosB0[0x56] = psxBios_GetC0Table;
 	biosB0[0x57] = psxBios_GetB0Table;
 	biosB0[0x58] = psxBios__card_chan;
-	//biosB0[0x59] = psxBios_sys_b0_59;
+	biosB0[0x59] = psxBios_test_device;
 	//biosB0[0x5a] = psxBios_sys_b0_5a;
 	biosB0[0x5b] = psxBios_ChangeClearPad;
 	biosB0[0x5c] = psxBios__card_status;
