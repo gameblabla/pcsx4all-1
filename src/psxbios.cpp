@@ -2346,7 +2346,22 @@ void psxBios_close(void) { // 0x36
 }
 
 void psxBios_putchar(void) { // 3d
-	//printf("%c", (char)a0);
+	char logchar = ( a0 == 0xa ? '>' : (char)a0 );
+	if (psxstrbuf_count < PSXSTRBUFMAX) psxstrbuf[psxstrbuf_count++] = logchar;
+
+#ifdef PSXBIOS_LOG
+	PSXBIOS_LOG("psxBios_%s: %x (%c)\n", biosB0n[0x3d], a0, logchar);
+#else
+	printf("%c", (char)a0);
+#endif
+	if ((a0 == 0xa && psxstrbuf_count >= 2) || psxstrbuf_count >= PSXSTRBUFMAX) {
+		psxstrbuf[psxstrbuf_count++] = '\0';
+#ifdef PSXBIOS_LOG
+		PSXBIOS_LOG("psxBios_%s: string_[%d]_cr: %s\n", biosB0n[0x3d], psxstrbuf_count, psxstrbuf);
+#endif
+		psxstrbuf_count = 0;
+	}
+
 	pc0 = ra;
 }
 
