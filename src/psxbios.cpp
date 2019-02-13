@@ -786,6 +786,11 @@ void psxBios_strncpy(void) { // 0x1a
 void psxBios_strlen(void) { // 0x1b
 	char *p = (char *)Ra0;
 	v0 = 0;
+	if (a0 == 0)
+	{
+		pc0 = ra;
+		return;
+	}
 	while (*p++) v0++;
 	pc0 = ra;
 }
