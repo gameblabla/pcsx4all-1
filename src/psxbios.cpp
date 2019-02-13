@@ -1661,12 +1661,18 @@ void psxBios_PAD_init(void) { // 15
 #ifdef PSXBIOS_LOG
 	PSXBIOS_LOG("psxBios_%s\n", biosB0n[0x15]);
 #endif
-
+	if (!(a0 == 0x20000000 || a0 == 0x20000001))
+	{
+		v0 = 0;
+		pc0 = ra;
+		return;
+	}
 	ResetIoCycle();
 	psxHwWrite16(0x1f801074, (u16)(psxHwRead16(0x1f801074) | 0x1));
 	pad_buf = (int*)Ra1;
 	*pad_buf = -1;
 	psxRegs.CP0.n.Status |= 0x401;
+	v0 = 2;
 	pc0 = ra;
 }
 
