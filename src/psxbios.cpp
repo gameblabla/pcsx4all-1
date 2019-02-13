@@ -1074,6 +1074,13 @@ void psxBios_memcmp() { // 0x2d
 void psxBios_memchr() { // 0x2e
 	char *p = (char *)Ra0;
 
+	v0 = 0;
+	if (a0 == 0 || a2 > 0x7FFFFFFF)
+	{
+		pc0 = ra;
+		return;
+	}
+
 	while ((s32)a2-- > 0) {
 		if (*p++ != (s8)a1) continue;
 		v0 = a0 + (p - (char *)Ra0 - 1);
