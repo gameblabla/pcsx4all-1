@@ -1693,6 +1693,40 @@ void psxBios__96_remove(void) { // 72
 	ResetIoCycle();
 }
 
+void psxBios__96_CdSeekL(void)
+{
+#ifdef PSXBIOS_LOG
+	printf("FIXME : psxBios__96_CdSeekL\n");
+#endif
+	v0 = 0;
+	pc0 = ra;
+}
+
+void psxBios__96_CdGetStatus(void)
+{
+#ifdef PSXBIOS_LOG
+	printf("FIXME : psxBios__96_CdGetStatus\n");
+#endif
+	v0 = 1;
+	pc0 = ra;
+}
+
+void psxBios__96_CdRead(void)
+{
+#ifdef PSXBIOS_LOG
+	printf("FIXME : psxBios__96_CdRead\n");
+#endif
+	v0 = 1;
+	pc0 = ra;
+}
+
+/* TODO FIXME : Not compliant */
+void psxBios_get_cd_status(void) //a6
+{
+	v0 = 1;
+	pc0 = ra;
+}
+
 void psxBios_SetMem(void) { // 9f
 	u32 _new = psxHu32(0x1060);
 
@@ -2838,13 +2872,13 @@ void psxBiosInit(void) {
 	//biosA0[0x75] = psxBios_sys_a0_75;
 	//biosA0[0x76] = psxBios_sys_a0_76;
 	//biosA0[0x77] = psxBios_sys_a0_77;
-	//biosA0[0x78] = psxBios__96_CdSeekL;
+	biosA0[0x78] = psxBios__96_CdSeekL;
 	//biosA0[0x79] = psxBios_sys_a0_79;
 	//biosA0[0x7a] = psxBios_sys_a0_7a;
 	//biosA0[0x7b] = psxBios_sys_a0_7b;
-	//biosA0[0x7c] = psxBios__96_CdGetStatus;
+	biosA0[0x7c] = psxBios__96_CdGetStatus;
 	//biosA0[0x7d] = psxBios_sys_a0_7d;
-	//biosA0[0x7e] = psxBios__96_CdRead;
+	biosA0[0x7e] = psxBios__96_CdRead;
 	//biosA0[0x7f] = psxBios_sys_a0_7f;
 	//biosA0[0x80] = psxBios_sys_a0_80;
 	//biosA0[0x81] = psxBios_sys_a0_81;
@@ -2884,7 +2918,7 @@ void psxBiosInit(void) {
 	//biosA0[0xa3] = psxBios_DequeueCdIntr;
 	//biosA0[0xa4] = psxBios_sys_a0_a4;
 	//biosA0[0xa5] = psxBios_ReadSector;
-	//biosA0[0xa6] = psxBios_get_cd_status;
+	biosA0[0xa6] = psxBios_get_cd_status;
 	//biosA0[0xa7] = psxBios_bufs_cb_0;
 	//biosA0[0xa8] = psxBios_bufs_cb_1;
 	//biosA0[0xa9] = psxBios_bufs_cb_2;
