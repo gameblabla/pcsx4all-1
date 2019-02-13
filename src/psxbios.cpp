@@ -2905,9 +2905,9 @@ void psxBiosInit(void) {
 	biosA0[0x51] = psxBios_LoadExec;
 	//biosA0[0x52] = psxBios_GetSysSp;
 	//biosA0[0x53] = psxBios_sys_a0_53;
-	//biosA0[0x54] = psxBios__96_init_a54;
-	//biosA0[0x55] = psxBios__bu_init_a55;
-	//biosA0[0x56] = psxBios__96_remove_a56;
+	biosA0[0x54] = psxBios__96_init;
+	biosA0[0x55] = psxBios__bu_init;
+	biosA0[0x56] = psxBios__96_remove;
 	//biosA0[0x57] = psxBios_sys_a0_57;
 	//biosA0[0x58] = psxBios_sys_a0_58;
 	//biosA0[0x59] = psxBios_sys_a0_59;
@@ -2970,7 +2970,7 @@ void psxBiosInit(void) {
 	//biosA0[0x92] = psxBios_sys_a0_92;
 	//biosA0[0x93] = psxBios_sys_a0_93;
 	//biosA0[0x94] = psxBios_sys_a0_94;
-	//biosA0[0x95] = psxBios_sys_a0_95;
+	biosA0[0x95] = psxBios__96_init; //Subfunction of CDInit
 	//biosA0[0x96] = psxBios_AddCDROMDevice;
 	//biosA0[0x97] = psxBios_AddMemCardDevide;
 	//biosA0[0x98] = psxBios_DisableKernelIORedirection;
@@ -3061,8 +3061,8 @@ void psxBiosInit(void) {
 	//biosB0[0x37] = psxBios_ioctl;
 	//biosB0[0x38] = psxBios_exit;
 	//biosB0[0x39] = psxBios_sys_b0_39;
-	//biosB0[0x3a] = psxBios_getc;
-	//biosB0[0x3b] = psxBios_putc;
+	biosB0[0x3a] = psxBios_getc;
+	biosB0[0x3b] = psxBios_putc;
 	biosB0[0x3c] = psxBios_getchar;
 	//biosB0[0x3e] = psxBios_gets;
 	//biosB0[0x40] = psxBios_cd;
@@ -3078,13 +3078,13 @@ void psxBiosInit(void) {
 	biosB0[0x4a] = psxBios_InitCARD;
 	biosB0[0x4b] = psxBios_StartCARD;
 	biosB0[0x4c] = psxBios_StopCARD;
-	//biosB0[0x4d] = psxBios_sys_b0_4d;
+	biosB0[0x4d] = psxBios__card_info; // _card_info_subfunc, but it's a subfunction of psxBios__card_info
 	biosB0[0x4e] = psxBios__card_write;
 	biosB0[0x4f] = psxBios__card_read;
 	biosB0[0x50] = psxBios__new_card;
 	biosB0[0x51] = psxBios_Krom2RawAdd;
 	//biosB0[0x52] = psxBios_sys_b0_52;
-	//biosB0[0x53] = psxBios_sys_b0_53;
+	biosB0[0x53] = psxBios_Krom2RawAdd;	//This is a subfunction for B(51h) Krom2RawAdd(shiftjis_code).
 	//biosB0[0x54] = psxBios__get_errno;
 	//biosB0[0x55] = psxBios__get_error;
 	biosB0[0x56] = psxBios_GetC0Table;
@@ -3100,7 +3100,7 @@ void psxBiosInit(void) {
 	//biosC0[0x01] = psxBios_InitException;
 	biosC0[0x02] = psxBios_SysEnqIntRP;
 	biosC0[0x03] = psxBios_SysDeqIntRP;
-	//biosC0[0x04] = psxBios_get_free_EvCB_slot;
+	biosC0[0x04] = psxBios_OpenEvent; // get_free_EvCB_slot(), a subfunction for OpenEvent.
 	//biosC0[0x05] = psxBios_get_free_TCB_slot;
 	//biosC0[0x06] = psxBios_ExceptionHandler;
 	//biosC0[0x07] = psxBios_InstallExeptionHandler;
