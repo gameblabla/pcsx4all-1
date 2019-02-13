@@ -2798,6 +2798,19 @@ void psxBios_dummy(void) {
 	pc0 = ra; 
 }
 
+/* According to Nocash, this is unused (and duplicated many times) and jump to themseves.
+ * Potentially causing the system to hang. The odd thing is some games are actually making bios calls
+ * to them ! PS2 also behaves differently in this instance, it simply returns 0. (Possibly to avoid a hang)
+ * Given that PS2 behaviour is better than nothing, this is what we will target.
+ *  */
+void psxBios_SystemError(void) { 
+#ifdef PSXBIOS_LOG
+	PSXBIOS_LOG("unk %x call: %x\n", pc0 & 0x1fffff, t1);
+#endif
+	v0 = 0;
+	pc0 = ra; 
+}
+
 void (*biosA0[256])(void);
 void (*biosB0[256])(void);
 void (*biosC0[256])(void);
@@ -2906,11 +2919,12 @@ void psxBiosInit(void) {
     biosA0[0x4c] = psxBios_sys_a0_4c;
 	biosA0[0x4d] = psxBios_GPU_GetGPUStatus;
 	//biosA0[0x4e] = psxBios_GPU_sync;	
-	//biosA0[0x4f] = psxBios_sys_a0_4f;
-	//biosA0[0x50] = psxBios_sys_a0_50;
+	biosA0[0x4f] = psxBios_SystemError;
+	biosA0[0x50] = psxBios_SystemError;
 	biosA0[0x51] = psxBios_LoadExec;
+	/* Nocash says it is SystemError, other sources insist it is GetSysSp. So what is it ? */
 	//biosA0[0x52] = psxBios_GetSysSp;
-	//biosA0[0x53] = psxBios_sys_a0_53;
+	biosA0[0x53] = psxBios_SystemError;
 	biosA0[0x54] = psxBios__96_init;
 	biosA0[0x55] = psxBios__bu_init;
 	biosA0[0x56] = psxBios__96_remove;
@@ -2981,8 +2995,8 @@ void psxBiosInit(void) {
 	//biosA0[0x97] = psxBios_AddMemCardDevide;
 	//biosA0[0x98] = psxBios_DisableKernelIORedirection;
 	//biosA0[0x99] = psxBios_EnableKernelIORedirection;
-	//biosA0[0x9a] = psxBios_sys_a0_9a;
-	//biosA0[0x9b] = psxBios_sys_a0_9b;
+	biosA0[0x9a] = psxBios_SystemError; // This is AddMessageWindowDevice on DTL-H but we target real consoles, not protos.
+	biosA0[0x9b] = psxBios_SystemError; // This is AddCdromSimDevice on DTL-H but we target real consoles, not protos.
 	//biosA0[0x9c] = psxBios_SetConf;
 	//biosA0[0x9d] = psxBios_GetConf;
 	//biosA0[0x9e] = psxBios_sys_a0_9e;
@@ -3035,24 +3049,24 @@ void psxBiosInit(void) {
 	biosB0[0x17] = psxBios_ReturnFromException;
 	biosB0[0x18] = psxBios_ResetEntryInt;
 	biosB0[0x19] = psxBios_HookEntryInt;
-    //biosB0[0x1a] = psxBios_sys_b0_1a;
-	//biosB0[0x1b] = psxBios_sys_b0_1b;
-	//biosB0[0x1c] = psxBios_sys_b0_1c;
-	//biosB0[0x1d] = psxBios_sys_b0_1d;
-	//biosB0[0x1e] = psxBios_sys_b0_1e;
-	//biosB0[0x1f] = psxBios_sys_b0_1f;
+	biosB0[0x1a] = psxBios_SystemError;
+	biosB0[0x1b] = psxBios_SystemError;
+	biosB0[0x1c] = psxBios_SystemError;
+	biosB0[0x1d] = psxBios_SystemError;
+	biosB0[0x1e] = psxBios_SystemError;
+	biosB0[0x1f] = psxBios_SystemError;
 	biosB0[0x20] = psxBios_UnDeliverEvent;
-	//biosB0[0x21] = psxBios_sys_b0_21;
-	//biosB0[0x22] = psxBios_sys_b0_22;
-	//biosB0[0x23] = psxBios_sys_b0_23;
+	biosB0[0x21] = psxBios_SystemError;
+	biosB0[0x22] = psxBios_SystemError;
+	biosB0[0x23] = psxBios_SystemError;
 	//biosB0[0x24] = psxBios_sys_b0_24;
 	//biosB0[0x25] = psxBios_sys_b0_25;
 	//biosB0[0x26] = psxBios_sys_b0_26;
 	//biosB0[0x27] = psxBios_sys_b0_27;
 	//biosB0[0x28] = psxBios_sys_b0_28;
 	//biosB0[0x29] = psxBios_sys_b0_29;
-	//biosB0[0x2a] = psxBios_sys_b0_2a;
-	//biosB0[0x2b] = psxBios_sys_b0_2b;
+	biosB0[0x2a] = psxBios_SystemError;
+	biosB0[0x2b] = psxBios_SystemError;
 	//biosB0[0x2c] = psxBios_sys_b0_2c;
 	//biosB0[0x2d] = psxBios_sys_b0_2d;
 	//biosB0[0x2e] = psxBios_sys_b0_2e;
@@ -3089,7 +3103,7 @@ void psxBiosInit(void) {
 	biosB0[0x4f] = psxBios__card_read;
 	biosB0[0x50] = psxBios__new_card;
 	biosB0[0x51] = psxBios_Krom2RawAdd;
-	//biosB0[0x52] = psxBios_sys_b0_52;
+	biosB0[0x52] = psxBios_SystemError;
 	biosB0[0x53] = psxBios_Krom2RawAdd;	//This is a subfunction for B(51h) Krom2RawAdd(shiftjis_code).
 	//biosB0[0x54] = psxBios__get_errno;
 	biosB0[0x55] = psxBios__get_error;
@@ -3097,7 +3111,7 @@ void psxBiosInit(void) {
 	biosB0[0x57] = psxBios_GetB0Table;
 	biosB0[0x58] = psxBios__card_chan;
 	biosB0[0x59] = psxBios_test_device;
-	//biosB0[0x5a] = psxBios_sys_b0_5a;
+	biosB0[0x5a] = psxBios_SystemError;
 	biosB0[0x5b] = psxBios_ChangeClearPad;
 	biosB0[0x5c] = psxBios__card_status;
 	biosB0[0x5d] = psxBios__card_wait;
@@ -3113,7 +3127,7 @@ void psxBiosInit(void) {
 	//biosC0[0x08] = psxBios_SysInitMemory;
 	//biosC0[0x09] = psxBios_SysInitKMem;
 	biosC0[0x0a] = psxBios_ChangeClearRCnt;	
-	//biosC0[0x0b] = psxBios_SystemError;
+	biosC0[0x0b] = psxBios_SystemError;
 	//biosC0[0x0c] = psxBios_InitDefInt;
     //biosC0[0x0d] = psxBios_sys_c0_0d;
 	//biosC0[0x0e] = psxBios_sys_c0_0e;
