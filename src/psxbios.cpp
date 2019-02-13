@@ -2136,8 +2136,11 @@ void psxBios_StopPAD(void) { // 14
 #endif
 
 	pad_stopped = 1;
-	pad_buf1 = NULL;
-	pad_buf2 = NULL;
+	if (pad_buf == 0)
+	{
+		pad_buf1 = NULL;
+		pad_buf2 = NULL;
+	}
 	pc0 = ra;
 }
 
