@@ -2951,7 +2951,9 @@ void psxBiosException(void) {
 		case 0x20: // Syscall
 			switch (a0) {
 				case 1: // EnterCritical - disable irq's
-					psxRegs.CP0.n.Status&=~0x404; 
+					/* Fixes Medievil 2 not loading up new game, Digimon World not booting up and possibly others */
+					v0 = (psxRegs.CP0.n.Status & 0x404) == 0x404;
+					psxRegs.CP0.n.Status &= ~0x404;
 					//v0=1;	// HDHOSHY experimental patch: Spongebob, Coldblood, fearEffect, Medievil2, Martian Gothic
 					break;
 
