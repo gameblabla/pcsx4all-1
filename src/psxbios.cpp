@@ -2350,9 +2350,48 @@ void psxBios_putchar(void) { // 3d
 	pc0 = ra;
 }
 
+#define PSXSTRBUFMAX 255
+char psxstrbuf[PSXSTRBUFMAX+1];
+unsigned short psxstrbuf_count = 0;
+
+// if R4 is 00000000h then "<NULL>" is output (only that six letters; without appending any CR or LF).
+// We need to handle this case
 void psxBios_puts(void) { // 3e/3f
 	//printf(Ra0);
+	char tmp[1024];
+	u32 save[4];
+	char *ptmp = tmp;
+	int i=0;
+	void *psp;
+	
+	if (a0 == 0)
+	{
+		pc0 = ra;
+		return;
+	}
+
+	psp = PSXM(sp);
+	if (psp) {
+		memcpy(save, psp, 4 * 4);
+		psxMu32ref(sp) = SWAP32((u32)a0);
+		psxMu32ref(sp + 4) = SWAP32((u32)a1);
+		psxMu32ref(sp + 8) = SWAP32((u32)a2);
+		psxMu32ref(sp + 12) = SWAP32((u32)a3);
+	}
+
+	while (Ra0[i]) {
+		switch (Ra0[i]) {
+			default:
+				*ptmp++ = Ra0[i++];
+		}
+	}
+	*ptmp = 0;
+
+	if (psp)
+		memcpy(psp, save, 4 * 4);
+
 	pc0 = ra;
+	psxRegs.GPR.n.hi = 0x00000008;
 }
 
 /*
