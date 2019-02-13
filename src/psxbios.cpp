@@ -544,6 +544,35 @@ void psxBios_todigit(void) // 0x0a
 	pc0 = ra;
 }
 
+// A(0Dh) - strtol(src, src_end, base)
+/* Consider these to be stubs for now. */
+void psxBios_strtoul(void) // 0x0c
+{ 
+	char *p0 = (char *)Ra0;
+	char **p1 = (char **)Ra1;
+	char *p1_r = (char *)Ra1;
+#ifdef PSXBIOS_LOG
+	PSXBIOS_LOG("psxBios_%s\n", biosA0n[0x0c]);
+#endif
+	if (a0 == 0)
+	{
+		v0 = 0;
+		pc0 = ra;	
+		return;
+	}
+
+	int res = strtol(p0, p1, a2);
+	int size = strlen(p1_r);
+	a1 = a1 + size;
+	v0 = res;
+	pc0 = ra;
+}
+
+void psxBios_strtol(void) // 0x0d
+{
+	psxBios_strtoul();
+}
+
 void psxBios_abs(void) { // 0x0e
 	if ((s32)a0 < 0) v0 = -(s32)a0;
 	else v0 = a0;
@@ -2562,8 +2591,8 @@ void psxBiosInit(void) {
 	biosA0[0x09] = psxBios_putc;
 	biosA0[0x0a] = psxBios_todigit;
 	//biosA0[0x0b] = psxBios_atof;
-	//biosA0[0x0c] = psxBios_strtoul;
-	//biosA0[0x0d] = psxBios_strtol;
+	biosA0[0x0c] = psxBios_strtoul;
+	biosA0[0x0d] = psxBios_strtol;
 	biosA0[0x0e] = psxBios_abs;
 	biosA0[0x0f] = psxBios_labs;
     biosA0[0x10] = psxBios_atoi;
