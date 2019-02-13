@@ -2540,6 +2540,10 @@ void psxBios_InitCARD(void) { // 4a
 #endif
 
 	CardState = 0;
+	
+	/* The function may destroy kernel handlers according to doc */
+	k0 = 0;
+	k1 = 0;
 
 	pc0 = ra;
 }
