@@ -778,6 +778,12 @@ void psxBios_strncmp(void) { // 0x18
 }
 
 void psxBios_strcpy(void) { // 0x19
+	if (a0 == 0 || a1 == 0)
+	{
+		v0 = 0;
+		pc0 = ra;
+		return;
+	}
 	char *p1 = (char *)Ra0, *p2 = (char *)Ra1;
 	while ((*p1++ = *p2++) != '\0');
 
@@ -787,7 +793,12 @@ void psxBios_strcpy(void) { // 0x19
 void psxBios_strncpy(void) { // 0x1a
 	char *p1 = (char *)Ra0, *p2 = (char *)Ra1;
 	s32 n = a2, i;
-
+	if (a0 == 0 || a1 == 0)
+	{
+		v0 = 0;
+		pc0 = ra;
+		return;
+	}
 	for (i = 0; i < n; i++) {
 		if ((*p1++ = *p2++) == '\0') {
 			while (++i < n) {
