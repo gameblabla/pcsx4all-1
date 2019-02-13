@@ -2034,10 +2034,12 @@ void psxBios_DisableEvent(void) { // 0d
  */
 
 void psxBios_OpenTh(void) { // 0e
-	int th;
-
-	for (th=1; th<8; th++)
+	uint32_t th = 8;
+	do
+	{
 		if (Thread[th].status == 0) break;
+		th--;
+	} while (th!=0);
 
 #ifdef PSXBIOS_LOG
 	PSXBIOS_LOG("psxBios_%s: %x\n", biosB0n[0x0e], th);
