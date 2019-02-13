@@ -881,8 +881,14 @@ void psxBios_strpbrk(void) { // 0x20
 		}
 	}
 
-	// should return a0 instead of NULL if not found (???)
-	v0 = a0; pc0 = ra;
+
+	/* BUG: If there was no occurence, it returns 0 only if src[0]=00h, and otherwise returns the incoming "src" value */
+	/* (which is the SAME return value as when a occurence did occur on 1st character). */
+	if (p1[0] == 0x00)
+		v0 = 0;
+	else
+		v0 = a0;
+	pc0 = ra;
 }
 
 void psxBios_strspn(void) { // 0x21
