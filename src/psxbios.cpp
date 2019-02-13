@@ -974,8 +974,22 @@ void psxBios_bcopy(void) { // 0x27
 
 void psxBios_bzero(void) { // 0x28
 	char *p = (char *)Ra0;
+	v0 = a0;
+	/* Same as memset here (See memset below) */
+	if (a1 > 0x7FFFFFFF || a1 == 0)
+	{
+		v0 = 0;
+		pc0 = ra;
+		return;
+	}
+	else if (a0 == 0)
+	{
+		pc0 = ra;
+		return;
+	}
+	
 	while ((s32)a1-- > 0) *p++ = '\0';
-
+	a1 = 0;
 	pc0 = ra;
 }
 
