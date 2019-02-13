@@ -25,6 +25,7 @@
 #include "psxbios.h"
 #include "psxhw.h"
 #include "gpu.h"
+#include "cdrom.h"
 #include <zlib.h>
 
 //We try to emulate bios :) HELP US :P
@@ -1470,6 +1471,19 @@ void psxBios_SetMem(void) { // 9f
 	pc0 = ra;
 }
 
+/* Resets the CD-ROM drive, the kernel but does not reload SYSTEM.CNF file. (Could be used for multi-discs games) */
+/* FIXME TODO : Check against games that use it. */
+void psxBios__boot(void) // a0
+{
+	if (Config.SpuIrq) psxHu32ref(0x1070) |= SWAP32(0x200);
+	memset(psxH, 0, 0x10000);
+	cdrReset();
+	HW_GPU_STATUS = 0x14802000;
+	//memset(psxM, 0, 0x200000);
+	//memset(psxP, 0, 0x10000);
+	memset(psxR, 0, 0x80000);    // Bios memory
+}
+
 void psxBios__card_info(void) { // ab
 #ifdef PSXBIOS_LOG
 	PSXBIOS_LOG("psxBios_%s: %x\n", biosA0n[0xab], a0);
@@ -2605,7 +2619,7 @@ void psxBiosInit(void) {
 	//biosA0[0x9d] = psxBios_GetConf;
 	//biosA0[0x9e] = psxBios_sys_a0_9e;
 	biosA0[0x9f] = psxBios_SetMem;
-	//biosA0[0xa0] = psxBios__boot;
+	biosA0[0xa0] = psxBios__boot;
 	//biosA0[0xa1] = psxBios_SystemError;
 	//biosA0[0xa2] = psxBios_EnqueueCdIntr;
 	//biosA0[0xa3] = psxBios_DequeueCdIntr;
