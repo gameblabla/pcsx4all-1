@@ -260,6 +260,15 @@ static int CurThread = 0;
 static FileDesc FDesc[32];
 static u32 card_active_chan;
 
+/* To avoid any issues with different behaviour when using the libc's own strlen instead.
+ * We want to mimic the PSX's behaviour in this case for bufile. */
+static size_t strlen_internal(char* p) 
+{
+	size_t size_of_array = 0;
+	while (*p++) size_of_array++;
+	return size_of_array;
+}
+
 INLINE void softCall(u32 pc) {
 	pc0 = pc;
 	ra = 0x80001000;
@@ -395,6 +404,7 @@ static void buopen(int mcd, char *ptr, u8 cfg)
 #define bufile(mcd) { \
 	int i; \
 	const char *mcd_data = sioMcdDataPtr((mcd==1) ? MCD1 : MCD2); \
+	size_t size_of_name = strlen_internal(dir->name); \
 	while (nfile < 16) { \
 		int match=1; \
  \
@@ -406,7 +416,7 @@ static void buopen(int mcd, char *ptr, u8 cfg)
 		ptr+= 0xa; \
 		if (pfile[0] == 0) { \
 			strncpy(dir->name, ptr, sizeof(dir->name) - 1); \
-			if (strlen(dir->name) < sizeof(dir->name)) dir->name[strlen(dir->name)] = '\0'; \
+			if (size_of_name < sizeof(dir->name)) dir->name[size_of_name] = '\0'; \
 		} else for (i=0; i<20; i++) { \
 			if (pfile[i] == ptr[i]) { \
 				dir->name[i] = ptr[i]; \
