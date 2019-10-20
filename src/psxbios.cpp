@@ -3083,6 +3083,22 @@ void psxBiosInit(void) {
 
 	// memory size 2 MB
 	psxHu32ref(0x1060) = SWAPu32(0x00000b88);
+	
+	/*	Some games like R-Types, CTR, Fade to Black read from adress 0x00000000 due to uninitialized pointers.
+		See Garbage Area at Address 00000000h in Nocash PSX Specfications for more information.
+		Here are some examples of games not working with this fix in place :
+		R-type won't get past the Irem logo if not implemented.
+		Crash Team Racing will softlock after the Sony logo.
+	*/
+	
+	psxMu32ref(0x0000) = SWAPu32(0x00000003);
+	/*
+	But overwritten by 00000003h soon after.
+	psxMu32ref(0x0000) = SWAPu32(0x00001A3C);
+	*/
+	psxMu32ref(0x0004) = SWAPu32(0x800C5A27);
+	psxMu32ref(0x0008) = SWAPu32(0x08000403);
+	psxMu32ref(0x000C) = SWAPu32(0x00000000);
 }
 
 void psxBiosShutdown() {
